@@ -41,6 +41,7 @@ _DATA = Path(__file__).resolve().parent.parent / "tokenizer" / "data" / "the-ver
 with open(_DATA, "r", encoding="utf-8") as file:
   raw_text = file.read()
 
+# === create a dataloader with a batch size of 1, max length of 4, stride of 1, and shuffle set to False ===
 dataloader = create_dataloader(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
 data_iter = iter(dataloader)
 
@@ -49,3 +50,13 @@ print(first_batch)
 
 second_batch = next(data_iter)
 print(second_batch)
+# === // ===
+
+# === create a dataloader with a batch size of 8, max length of 4, stride of 4, and shuffle set to False ===
+dataloader = create_dataloader(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+data_iter = iter(dataloader)
+
+inputs, targets = next(data_iter)
+print("Inputs:\n", inputs)
+print("\nTargets:\n", targets)
+# === // ===

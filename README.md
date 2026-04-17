@@ -18,3 +18,15 @@ The BPE tokenizer can parse any word and doesn’t need to replace unknown words
 ## Input-Target pair for LLM training
 
 Create input (what the LLM receives) and target (what the LLM should predict) tensors based on the tokenized input text
+
+Wrap the dataset into a dataloader. Enables iterating on the data for the training process.
+
+## Token Embeddings
+
+This phase is about the tranformation of Token IDs into Embeddings vectors.
+
+To build an embedding, we need the vocabulary size (rows — every unique word/token) and the output dimension (columns — how much space/detail the model is allowed to use to capture the meaning of each token).
+
+The generated embedding contains small, random values and it is optimized during LLM training through backpropagation.
+
+With the embedding layer (weight matrix), we perform a lookup operation, retrieving the embedding vector corresponding to the token ID from the embedding layer’s weight matrix
