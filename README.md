@@ -30,3 +30,13 @@ To build an embedding, we need the vocabulary size (rows — every unique word/t
 The generated embedding contains small, random values and it is optimized during LLM training through backpropagation.
 
 With the embedding layer (weight matrix), we perform a lookup operation, retrieving the embedding vector corresponding to the token ID from the embedding layer’s weight matrix
+
+## Encoding word positions
+
+The same token ID always gets mapped to the same vector representation, regardless of where the token ID is positioned in the input sequence
+
+Add two categories of position-aware embeddings:
+
+- Relative positional embeddings: distance between tokens
+- Absolute positional embeddings: specific position in the sequence
+

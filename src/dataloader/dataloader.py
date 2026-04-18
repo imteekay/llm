@@ -1,4 +1,6 @@
 import tiktoken
+import torch
+import torch.nn as nn
 
 from torch.utils.data import Dataset, DataLoader
 
@@ -10,10 +12,10 @@ class GPTDataset(Dataset):
     token_ids = tokenizer.encode(text)
 
     for i in range(0, len(token_ids) - max_length, stride):
-      input_chunk = token_ids[i:i+max_length]
-      target_chunk = token_ids[i+1:i+max_length+1]
-      self.input_ids.append(input_chunk)
-      self.target_ids.append(target_chunk)
+      input_chunk = token_ids[i:i + max_length]
+      target_chunk = token_ids[i + 1:i + max_length + 1]
+      self.input_ids.append(torch.tensor(input_chunk))
+      self.target_ids.append(torch.tensor(target_chunk))
 
   def __len__(self):
     return len(self.input_ids)
@@ -53,10 +55,27 @@ print(second_batch)
 # === // ===
 
 # === create a dataloader with a batch size of 8, max length of 4, stride of 4, and shuffle set to False ===
-dataloader = create_dataloader(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+max_length = 4
+dataloader = create_dataloader(raw_text, batch_size=8, max_length=max_length, stride=max_length, shuffle=False)
 data_iter = iter(dataloader)
 
 inputs, targets = next(data_iter)
 print("Inputs:\n", inputs)
 print("\nTargets:\n", targets)
+print("\nInputs shape:\n", inputs.shape)
+# === // ===
+
+# === create token embeddings ===
+vocab_size = 50257
+output_dim = 256
+token_embedding_layer = nn.Embedding(vocab_size, output_dim)
+token_embeddings = token_embedding_layer(inputs)
+print(token_embeddings.shape)
+# === // ===
+
+# === create position embeddings ===
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+pos_embeddings = pos_embedding_layer(torch.arange(context_length))
+print(pos_embeddings.shape)
 # === // ===
