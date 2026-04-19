@@ -51,9 +51,9 @@ Self-attention computes a context vector for each token. A context vector is a c
 
 Context vector calculation:
 
-- The attention score between a query token and each sequence token is calculated through a dot product between the two. It combines two vectors to produce a scalar value. It measures the similarity of how close they are.
-- Normalization: divide the attention scores by the sum of all scores. The main goal behind the normalization is to obtain attention weights that sum up to 1.
+- Compute attention scores: the attention score between a query token and each sequence token is calculated through a dot product between the two. It combines two vectors to produce a scalar value. It measures the similarity of how close they are.
+- Compute attention weights (Normalization): divide the attention scores by the sum of all scores. The main goal behind the normalization is to obtain attention weights that sum up to 1.
   - It's more common to use softmax to normalize the scores
-- Context vector calculation: the combination of all input vectors weighted by the attention weights
+- Compute context vectors: the combination of all input vectors weighted by the attention weights
 
 This output is an enriched representation of each token in the input sequence.
