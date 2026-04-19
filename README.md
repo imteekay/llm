@@ -4,10 +4,13 @@
 
 Flow: Tokenizer(Input text) -> Tokenized text (separate words) -> Token IDs -> Token embeddings
 
+![](images/001.png)
+
 - Input text
 - Tokenized text
 - Token IDs
-- Token embeddings
+- Token embeddings + Positional embeddings
+- Input embeddings
 
 ## Byte-Pair Encoding (BPE)
 
@@ -39,4 +42,3 @@ Add two categories of position-aware embeddings:
 
 - Relative positional embeddings: distance between tokens
 - Absolute positional embeddings: specific position in the sequence
-

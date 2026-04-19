@@ -70,12 +70,15 @@ vocab_size = 50257
 output_dim = 256
 token_embedding_layer = nn.Embedding(vocab_size, output_dim)
 token_embeddings = token_embedding_layer(inputs)
-print(token_embeddings.shape)
+print("Token embeddings shape:\n", token_embeddings.shape)
 # === // ===
 
 # === create position embeddings ===
 context_length = max_length
 positional_embedding_layer = torch.nn.Embedding(context_length, output_dim)
 positional_embeddings = positional_embedding_layer(torch.arange(context_length))
-print(positional_embeddings.shape)
+print("Positional embeddings shape:\n", positional_embeddings.shape)
 # === // ===
+
+input_embeddings = token_embeddings + positional_embeddings
+print("Input embeddings shape:\n", input_embeddings.shape)
