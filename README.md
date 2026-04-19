@@ -49,4 +49,11 @@ Self-attention computes attention weights for each part of the input sequence. I
 
 Self-attention computes a context vector for each token. A context vector is a combination of all input vectors weighted with respect to the input element. It's the application of the attention mechanism and the output is fed into next block of the transformer architecture.
 
+Context vector calculation:
+
+- The attention score between a query token and each sequence token is calculated through a dot product between the two. It combines two vectors to produce a scalar value. It measures the similarity of how close they are.
+- Normalization: divide the attention scores by the sum of all scores. The main goal behind the normalization is to obtain attention weights that sum up to 1.
+  - It's more common to use softmax to normalize the scores
+- Context vector calculation: the combination of all input vectors weighted by the attention weights
+
 This output is an enriched representation of each token in the input sequence.
