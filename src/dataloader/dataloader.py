@@ -75,7 +75,7 @@ print(token_embeddings.shape)
 
 # === create position embeddings ===
 context_length = max_length
-pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
-pos_embeddings = pos_embedding_layer(torch.arange(context_length))
-print(pos_embeddings.shape)
+positional_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+positional_embeddings = positional_embedding_layer(torch.arange(context_length))
+print(positional_embeddings.shape)
 # === // ===
