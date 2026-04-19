@@ -12,19 +12,19 @@ Flow: Tokenizer(Input text) -> Tokenized text (separate words) -> Token IDs -> T
 - Token embeddings + Positional embeddings
 - Input embeddings
 
-## Byte-Pair Encoding (BPE)
+### Byte-Pair Encoding (BPE)
 
 It breaks down unknown words into subwords or individual characters.
 
 The BPE tokenizer can parse any word and doesn’t need to replace unknown words with special tokens, such as <|unk|> (even if it contains words that were not present in its training data.).
 
-## Input-Target pair for LLM training
+### Input-Target pair for LLM training
 
 Create input (what the LLM receives) and target (what the LLM should predict) tensors based on the tokenized input text
 
 Wrap the dataset into a dataloader. Enables iterating on the data for the training process.
 
-## Token Embeddings
+### Token Embeddings
 
 This phase is about the tranformation of Token IDs into Embeddings vectors.
 
@@ -34,7 +34,7 @@ The generated embedding contains small, random values and it is optimized during
 
 With the embedding layer (weight matrix), we perform a lookup operation, retrieving the embedding vector corresponding to the token ID from the embedding layer’s weight matrix
 
-## Encoding word positions
+### Encoding word positions
 
 The same token ID always gets mapped to the same vector representation, regardless of where the token ID is positioned in the input sequence
 
@@ -42,3 +42,11 @@ Add two categories of position-aware embeddings:
 
 - Relative positional embeddings: distance between tokens
 - Absolute positional embeddings: specific position in the sequence
+
+## Attention
+
+Self-attention computes attention weights for each part of the input sequence. It learns the relationships and dependencies between parts of the input sequence. This attention weight is the calculation of how much attention the token should pay attention to all other words in the input sequence.
+
+Self-attention computes a context vector for each token. A context vector is a combination of all input vectors weighted with respect to the input element. It's the application of the attention mechanism and the output is fed into next block of the transformer architecture.
+
+This output is an enriched representation of each token in the input sequence.
