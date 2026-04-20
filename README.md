@@ -77,6 +77,8 @@ The dot product between each query and the other keys produces the attention sco
 - q_2 x k_2 = w22
 - q_2 x k_3 = w23
 
-Scale the attention scores by dividing them by the square root of the embedding dimension of the keys.
+Scale the attention scores by dividing them by the square root of the embedding dimension of the keys. This is why the self-attention mechanism is also called scaled-dot product attention.
 
-This is why the self-attention mechanism is also called scaled-dot product attention.
+With that, we get the attention weights.
+
+To compute the context vectors, we need to compute the matrix multiplication between the attention weights and the value weights (attention_weights @ v).
