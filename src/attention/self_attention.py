@@ -2,16 +2,16 @@ import torch
 import torch.nn as nn
 
 class SelfAttention(nn.Module):
-  def __init__(self, d_in, d_out):
+  def __init__(self, d_in, d_out, qkv_bias=False):
     super().__init__()
-    self.W_query = nn.Parameter(torch.rand(d_in, d_out))
-    self.W_key = nn.Parameter(torch.rand(d_in, d_out))
-    self.W_value = nn.Parameter(torch.rand(d_in, d_out))
+    self.W_query = nn.Linear(d_in, d_out, bias=qkv_bias)
+    self.W_key = nn.Linear(d_in, d_out, bias=qkv_bias)
+    self.W_value = nn.Linear(d_in, d_out, bias=qkv_bias)
 
   def forward(self, x):
-    q = x @ self.W_query
-    k = x @ self.W_key
-    v = x @ self.W_value
+    q = self.W_query(x)
+    k = self.W_key(x)
+    v = self.W_value(x)
 
     # SoftMax(Q x K.T / sqrt(d_out)) x V
     attention_scores = q @ k.T
@@ -35,3 +35,5 @@ d_out = 2
 
 self_attention = SelfAttention(d_in, d_out)
 print(self_attention(inputs))
+
+print(nn.Linear(d_in, d_out, bias=False))
