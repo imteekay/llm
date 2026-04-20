@@ -43,7 +43,7 @@ Add two categories of position-aware embeddings:
 - Relative positional embeddings: distance between tokens
 - Absolute positional embeddings: specific position in the sequence
 
-## Attention
+## Self-Attention
 
 Self-attention computes attention weights for each part of the input sequence. It learns the relationships and dependencies between parts of the input sequence. This attention weight is the calculation of how much attention the token should pay attention to all other words in the input sequence.
 
@@ -57,3 +57,26 @@ Context vector calculation:
 - Compute context vectors: the combination of all input vectors weighted by the attention weights
 
 This output is an enriched representation of each token in the input sequence.
+
+---
+
+The weight parameters are the learned coefficients in the network training. 
+
+It should compute the query, the key, and the value against each input token.
+
+- Query = query weight x input
+- Key = key weight x input
+- Value = value weight x input
+
+The dot product between each query and the other keys produces the attention score
+
+- q_1 x k_1 = w11
+- q_1 x k_2 = w12
+- q_1 x k_3 = w13
+- q_2 x k_1 = w21
+- q_2 x k_2 = w22
+- q_2 x k_3 = w23
+
+Scale the attention scores by dividing them by the square root of the embedding dimension of the keys.
+
+This is why the self-attention mechanism is also called scaled-dot product attention.
