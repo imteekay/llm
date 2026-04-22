@@ -82,3 +82,10 @@ Scale the attention scores by dividing them by the square root of the embedding 
 With that, we get the attention weights.
 
 To compute the context vectors, we need to compute the matrix multiplication between the attention weights and the value weights (attention_weights @ v).
+
+### Causal Self-Attention
+
+Modify the self-attention mechanism to consider only tokens that appear prior to the current position when predicting the next token.
+
+- Mask future tokens: zero attention weights above diagonal
+- Normalized the nonmasked attention weights (the sum of the row will be 1)

@@ -15,7 +15,13 @@ class SelfAttention(nn.Module):
 
     # SoftMax(Q x K.T / sqrt(d_out)) x V
     attention_scores = q @ k.T
+    context_length = attention_scores.shape[0]
+    mask = torch.tril(torch.ones(context_length, context_length))
     attention_weights = torch.softmax(attention_scores / k.shape[1] ** 0.5, dim=-1)
+    masked_attention_weights = attention_weights * mask
+    row_sums = masked_attention_weights.sum(dim=-1, keepdim=True)
+    masked_attention_weights_normalized = masked_attention_weights / row_sums
+    print("Masked attention weights normalized:\n", masked_attention_weights_normalized)
     context_vectors = attention_weights @ v
     return context_vectors
 
