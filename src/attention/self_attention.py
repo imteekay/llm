@@ -2,11 +2,12 @@ import torch
 import torch.nn as nn
 
 class SelfAttention(nn.Module):
-  def __init__(self, d_in, d_out, qkv_bias=False):
+  def __init__(self, d_in, d_out, dropout, qkv_bias=False):
     super().__init__()
     self.W_query = nn.Linear(d_in, d_out, bias=qkv_bias)
     self.W_key = nn.Linear(d_in, d_out, bias=qkv_bias)
     self.W_value = nn.Linear(d_in, d_out, bias=qkv_bias)
+    self.dropout = nn.Dropout(dropout)
 
   def forward(self, x):
     q = self.W_query(x)
@@ -19,6 +20,7 @@ class SelfAttention(nn.Module):
     mask = torch.triu(torch.ones(context_length, context_length), diagonal=1)
     masked_attention_weights = attention_scores.masked_fill(mask.bool(), -torch.inf)
     attention_weights = torch.softmax(masked_attention_weights / k.shape[1] ** 0.5, dim=-1)
+    attention_weights = self.dropout(attention_weights)
     context_vectors = attention_weights @ v
     return context_vectors
 
@@ -36,5 +38,5 @@ inputs = torch.tensor(
 d_in = inputs.shape[1]
 d_out = 2
 
-self_attention = SelfAttention(d_in, d_out)
+self_attention = SelfAttention(d_in, d_out, dropout=0.5)
 print(self_attention(inputs))

@@ -83,9 +83,20 @@ With that, we get the attention weights.
 
 To compute the context vectors, we need to compute the matrix multiplication between the attention weights and the value weights (attention_weights @ v).
 
-### Causal Self-Attention
+### Causal Self-Attention: information leakage
 
 Modify the self-attention mechanism to consider only tokens that appear prior to the current position when predicting the next token.
 
 - Mask future tokens: zero attention weights above diagonal
 - Normalized the nonmasked attention weights (the sum of the row will be 1)
+
+### Dropout
+
+A method to randomly select hidden layer units and drop them out. In practice, it's a drouput mask, where masking is about randomly zeroing some of the hidden layer units.
+
+They can be applied into specific times:
+
+- After calculating the attention weights
+- After applying the attention weights to the value vectors
+
+Because some values are zeroed, the attention weight becomes unnormalized again, but there is no need to normalize that because dropout scale up automatically, based on the dropout percentage (p=0.5 will lead to scaling up all the unmasked values to 1/0.5 = 2).
