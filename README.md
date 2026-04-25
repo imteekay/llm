@@ -100,3 +100,10 @@ They can be applied into specific times:
 - After applying the attention weights to the value vectors
 
 Because some values are zeroed, the attention weight becomes unnormalized again, but there is no need to normalize that because dropout scale up automatically, based on the dropout percentage (p=0.5 will lead to scaling up all the unmasked values to 1/0.5 = 2).
+
+### Multi-head Attention
+
+Dividing the attention mechanism into multiple heads, with independent operations.
+
+- Create multiple instances of the self-attention mechanism
+- Combine their outputs
