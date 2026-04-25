@@ -107,3 +107,4 @@ Dividing the attention mechanism into multiple heads, with independent operation
 
 - Create multiple instances of the self-attention mechanism
 - Combine their outputs
+- Run the attention mechanism multiple times, in parallel
