@@ -108,3 +108,13 @@ Dividing the attention mechanism into multiple heads, with independent operation
 - Create multiple instances of the self-attention mechanism
 - Combine their outputs
 - Run the attention mechanism multiple times, in parallel
+
+### Generating the Next Token
+
+- Encode text input
+- GPT outputs the matrix logits
+- Extract the last vector (next token)
+- Convert logits into probability (softmax)
+- Get the index of the largest value (index = token ID)
+- Decode token ID into text (next token)
+- Append the token to the original input text to generate the next token
