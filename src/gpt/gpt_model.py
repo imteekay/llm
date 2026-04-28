@@ -56,6 +56,7 @@ class TransformerBlock(nn.Module):
         x = self.dropout(x)
         x = x + shortcut
         
+        shortcut = x
         x = self.layer_norm2(x)
         x = self.ff(x)
         x = self.dropout(x)
@@ -109,5 +110,11 @@ GPT_CONFIG_124M = {
 
 model = GPTModel(GPT_CONFIG_124M)
 logits = model(batch)
+print("Input batch:\n", batch)
 print("Output shape:\n", logits.shape)
 print("Logits:\n", logits)
+
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Total number of parameters: {total_params:,}")
+print("Token embedding layer shape:", model.tok_emb.weight.shape)
+print("Output layer shape:", model.out_head.weight.shape)
