@@ -1,17 +1,18 @@
 import tiktoken
 import torch
 import torch.nn as nn
+from src.attention.multi_head_attention import MultiHeadAttention
 
 torch.manual_seed(123)
 
-class DummyGPTModel(nn.Module):
+class GPTModel(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
         self.drop_emb = nn.Dropout(cfg["drop_rate"])
         self.trf_blocks = nn.Sequential(
-            *[DummyTransformerBlock(cfg)
+            *[TransformerBlock(cfg)
               for _ in range(cfg["n_layers"])]
         )
         self.final_norm = LayerNorm(cfg["emb_dim"])
@@ -32,11 +33,33 @@ class DummyGPTModel(nn.Module):
         logits = self.out_head(x)
         return logits
 
-class DummyTransformerBlock(nn.Module):
+class TransformerBlock(nn.Module):
     def __init__(self, cfg):
         super().__init__()
+        self.attention = MultiHeadAttention(
+            d_in=cfg["emb_dim"],
+            d_out=cfg["emb_dim"],
+            context_length=cfg["context_length"],
+            num_heads=cfg["n_heads"],
+            dropout=cfg["drop_rate"],
+            qkv_bias=cfg["qkv_bias"]
+        )
+        self.ff = FeedForward(cfg)
+        self.layer_norm1 = LayerNorm(cfg["emb_dim"])
+        self.layer_norm2 = LayerNorm(cfg["emb_dim"])
+        self.dropout = nn.Dropout(cfg["drop_rate"])
 
     def forward(self, x):
+        shortcut = x
+        x = self.layer_norm1(x)
+        x = self.attention(x)
+        x = self.dropout(x)
+        x = x + shortcut
+        
+        x = self.layer_norm2(x)
+        x = self.ff(x)
+        x = self.dropout(x)
+        x = x + shortcut
         return x
 
 class LayerNorm(nn.Module):
@@ -84,13 +107,7 @@ GPT_CONFIG_124M = {
     "qkv_bias": False        # Query-Key-Value bias
 }
 
-model = DummyGPTModel(GPT_CONFIG_124M)
+model = GPTModel(GPT_CONFIG_124M)
 logits = model(batch)
 print("Output shape:\n", logits.shape)
 print("Logits:\n", logits)
-
-ff = FeedForward(GPT_CONFIG_124M)
-x = torch.rand(2, 3, 768)
-out = ff(x)
-print("Output shape:\n", out.shape)
-print("Output:\n", out)
