@@ -118,3 +118,9 @@ Dividing the attention mechanism into multiple heads, with independent operation
 - Get the index of the largest value (index = token ID)
 - Decode token ID into text (next token)
 - Append the token to the original input text to generate the next token
+
+## Pretraining
+
+- Training Loop
+- Model Evaluation
+- Load pretrained weights
