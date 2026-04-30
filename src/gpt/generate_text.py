@@ -16,9 +16,18 @@ def generate_text(model, idx, max_new_tokens, context_size):
 
     return idx
 
+def text_to_token_ids(text, tokenizer):
+    encoded = tokenizer.encode(text, allowed_special={'<|endoftext|>'})
+    encoded_tensor = torch.tensor(encoded).unsqueeze(0)
+    return encoded_tensor
+
+def token_ids_to_text(token_ids, tokenizer):
+    flat = token_ids.squeeze(0)
+    return tokenizer.decode(flat.tolist())
+
 GPT_CONFIG_124M = {
     "vocab_size": 50257,     # Vocabulary size
-    "context_length": 1024,  # Context length
+    "context_length": 256,   # Context length
     "emb_dim": 768,          # Embedding dimension
     "n_heads": 12,           # Number of attention heads
     "n_layers": 12,          # Number of layers
@@ -26,24 +35,20 @@ GPT_CONFIG_124M = {
     "qkv_bias": False        # Query-Key-Value bias
 }
 
+torch.manual_seed(123)
+
 model = GPTModel(GPT_CONFIG_124M)
 model.eval()
 
+tokenizer = tiktoken.get_encoding("gpt2")
+
 start_context = "Hello, I am"
 
-tokenizer = tiktoken.get_encoding("gpt2")
-encoded = tokenizer.encode(start_context)
-encoded_tensor = torch.tensor(encoded).unsqueeze(0)
-
-out = generate_text(
+token_ids = generate_text(
     model=model,
-    idx=encoded_tensor, 
+    idx=text_to_token_ids(start_context, tokenizer), 
     max_new_tokens=6, 
     context_size=GPT_CONFIG_124M["context_length"]
 )
 
-print("Output:", out)
-print("Output length:", len(out[0]))
-
-decoded_text = tokenizer.decode(out.squeeze(0).tolist())
-print(decoded_text)
+print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
