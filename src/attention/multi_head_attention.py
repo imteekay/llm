@@ -70,7 +70,6 @@ d_out = 2
 
 mha = MultiHeadAttention(d_in, d_out, context_length, 0.0, num_heads=2)
 context_vectors = mha(batch)
-print("Context vectors:\n", context_vectors)
 
 # ==================== Optimized Multi-head Attention ====================
 # x:  (1, 6, 3)
