@@ -114,8 +114,12 @@ Dividing the attention mechanism into multiple heads, with independent operation
 - Encode text input
 - GPT outputs the matrix logits
 - Extract the last vector (next token)
-- Convert logits into probability (softmax)
-- Get the index of the largest value (index = token ID)
+- The last vector for the given input token is the scores for the whole vocabulary (logits)
+  - Vector of size = vocab size, meaning there is a score for each token in the vocabulary
+  - This vector is the distribution that can be turned into a probability distribution using softmax
+- Convert logits into probability (softmax) to get the next token
+- Get the index of the largest probability value (index = token ID)
+  - The index holds the place of each token in the vocabulary
 - Decode token ID into text (next token)
 - Append the token to the original input text to generate the next token
 
