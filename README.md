@@ -128,3 +128,13 @@ Dividing the attention mechanism into multiple heads, with independent operation
 - Training Loop
 - Model Evaluation
 - Load pretrained weights
+
+### Model Training & Text Evaluation
+
+- Measure “how far” the generated tokens are from the correct predictions (targets)
+  - Get the index of highest probability
+  - Negative log (loss): the loss of the predicted token with the target
+  - Average all losses
+  - Negative average loss (cross entropy)
+- The goal is improve the learned parameters to adjust the model to generate text that is more similar or equally matches the target text
+- The model training aims to increase the softmax probability in the index positions corresponding to the correct target token IDs
