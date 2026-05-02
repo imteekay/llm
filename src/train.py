@@ -64,6 +64,8 @@ print("\nValidation loader:")
 for x, y in val_dataloader:
     print(x.shape, y.shape)
 
+print()
+
 def calculate_loss_batch(input_batch, target_batch, model):
   logits = model(input_batch)
   loss = torch.nn.functional.cross_entropy(
