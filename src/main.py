@@ -2,9 +2,10 @@ import tiktoken
 import torch
 import torch.nn as nn
 
-from src.gpt.gpt_model import GPTModel
 from pathlib import Path
+from src.gpt.gpt_model import GPTModel
 from src.dataloader.dataloader import create_dataloader
+from src.train import train_model
 
 _DATA = Path(__file__).resolve().parent / "data" / "the-verdict.txt"
 
@@ -63,13 +64,13 @@ batch.append(torch.tensor(tokenizer.encode(txt2)))
 batch = torch.stack(batch, dim=0)
 
 GPT_CONFIG_124M = {
-    "vocab_size": 50257,     # Vocabulary size
-    "context_length": 1024,  # Context length
-    "emb_dim": 768,          # Embedding dimension
-    "n_heads": 12,           # Number of attention heads
-    "n_layers": 12,          # Number of layers
-    "drop_rate": 0.1,        # Dropout rate
-    "qkv_bias": False        # Query-Key-Value bias
+  "vocab_size": 50257,     # Vocabulary size
+  "context_length": 256,   # Context length
+  "emb_dim": 768,          # Embedding dimension
+  "n_heads": 12,           # Number of attention heads
+  "n_layers": 12,          # Number of layers
+  "drop_rate": 0.1,        # Dropout rate
+  "qkv_bias": False        # Query-Key-Value bias
 }
 
 model = GPTModel(GPT_CONFIG_124M)
@@ -83,3 +84,49 @@ print(f"Total number of parameters: {total_params:,}")
 print("Token embedding layer shape:", model.tok_emb.weight.shape)
 print("Output layer shape:", model.out_head.weight.shape)
 # === // ===
+
+train_ratio = 0.90
+split_index = int(train_ratio * len(raw_text))
+train_data = raw_text[:split_index]
+val_data = raw_text[split_index:]
+
+train_dataloader = create_dataloader(
+  train_data,
+  batch_size=2,
+  max_length=GPT_CONFIG_124M["context_length"],
+  stride=GPT_CONFIG_124M["context_length"],
+  drop_last=True,
+  shuffle=True,
+  num_workers=0
+)
+
+val_dataloader = create_dataloader(
+  val_data,
+  batch_size=2,
+  max_length=GPT_CONFIG_124M["context_length"],
+  stride=GPT_CONFIG_124M["context_length"],
+  drop_last=False,
+  shuffle=False,
+  num_workers=0
+)
+
+optimizer = torch.optim.AdamW(
+  model.parameters(),
+  lr=0.0004,
+  weight_decay=0.1
+)
+
+num_epochs = 20
+
+train_losses, val_losses, tokens_seen = train_model(
+    model, train_dataloader, val_dataloader, optimizer,
+    num_epochs=num_epochs, eval_freq=5,
+    start_context="Every effort moves you", tokenizer=tokenizer
+)
+
+torch.save({
+    "model_state_dict": model.state_dict(),
+    "optimizer_state_dict": optimizer.state_dict(),
+    }, 
+    "model_and_optimizer.pth"
+)
