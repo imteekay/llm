@@ -138,3 +138,33 @@ Dividing the attention mechanism into multiple heads, with independent operation
   - Negative average loss (cross entropy)
 - The goal is improve the learned parameters to adjust the model to generate text that is more similar or equally matches the target text
 - The model training aims to increase the softmax probability in the index positions corresponding to the correct target token IDs
+
+Here are all the parameters learned in the model training
+
+**Embeddings**
+| Layer | Shape | Parameters |
+|---|---|---|
+| `tok_emb` | 50,257 × 768 | 38,597,376 |
+| `pos_emb` | 256 × 768 | 196,608 |
+
+**Per Transformer block (×12 layers)**
+| Layer | Shape | Parameters |
+|---|---|---|
+| `W_query` | 768 × 768 | 589,824 |
+| `W_key` | 768 × 768 | 589,824 |
+| `W_value` | 768 × 768 | 589,824 |
+| `out_proj` weight + bias | 768 × 768 + 768 | 590,592 |
+| FeedForward linear 1 weight + bias | 768 × 3,072 + 3,072 | 2,362,368 |
+| FeedForward linear 2 weight + bias | 3,072 × 768 + 768 | 2,360,064 |
+| `layer_norm1` scale + shift | 768 + 768 | 1,536 |
+| `layer_norm2` scale + shift | 768 + 768 | 1,536 |
+| **Subtotal per block** | | **7,085,568** |
+| **×12 blocks** | | **85,026,816** |
+
+**Final layers**
+| Layer | Shape | Parameters |
+|---|---|---|
+| `final_norm` scale + shift | 768 + 768 | 1,536 |
+| `out_head` weight (no bias) | 768 × 50,257 | 38,597,376 |
+
+**Total: ~124.4M parameters** — which matches the `GPT_CONFIG_124M` name.

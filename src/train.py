@@ -157,7 +157,7 @@ optimizer = torch.optim.AdamW(
   weight_decay=0.1
 )
 
-num_epochs = 10
+num_epochs = 20
 
 train_losses, val_losses, tokens_seen = train_model(
     model, train_dataloader, val_dataloader, optimizer,

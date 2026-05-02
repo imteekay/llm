@@ -78,11 +78,11 @@ class LayerNorm(nn.Module):
 class FeedForward(nn.Module):
     def __init__(self, cfg):
         super().__init__()
-        self.cfg = cfg
+        self.layers = nn.Sequential(
+            nn.Linear(cfg["emb_dim"], 4 * cfg["emb_dim"]),
+            nn.GELU(),
+            nn.Linear(4 * cfg["emb_dim"], cfg["emb_dim"]),
+        )
 
     def forward(self, x):
-        return nn.Sequential(
-            nn.Linear(self.cfg["emb_dim"], 4 * self.cfg["emb_dim"]),
-            nn.GELU(),
-            nn.Linear(4 * self.cfg["emb_dim"], self.cfg["emb_dim"]),
-        )(x)
+        return self.layers(x)
