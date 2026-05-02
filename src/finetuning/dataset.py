@@ -3,6 +3,7 @@ import zipfile
 import os
 import pandas as pd
 import torch
+import tiktoken
 
 from pathlib import Path
 
@@ -80,3 +81,6 @@ train_df, validation_df, test_df = random_split(balanced_df, 0.7, 0.1)
 train_df.to_csv("train.csv", index=None)
 validation_df.to_csv("validation.csv", index=None)
 test_df.to_csv("test.csv", index=None)
+
+tokenizer = tiktoken.get_encoding("gpt2")
+print(tokenizer.encode("<|endoftext|>", allowed_special={"<|endoftext|>"}))
