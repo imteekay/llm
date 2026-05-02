@@ -142,29 +142,39 @@ Dividing the attention mechanism into multiple heads, with independent operation
 Here are all the parameters learned in the model training
 
 **Embeddings**
-| Layer | Shape | Parameters |
-|---|---|---|
+| Layer     | Shape        | Parameters |
+| --------- | ------------ | ---------- |
 | `tok_emb` | 50,257 × 768 | 38,597,376 |
-| `pos_emb` | 256 × 768 | 196,608 |
+| `pos_emb` | 256 × 768    | 196,608    |
 
 **Per Transformer block (×12 layers)**
-| Layer | Shape | Parameters |
-|---|---|---|
-| `W_query` | 768 × 768 | 589,824 |
-| `W_key` | 768 × 768 | 589,824 |
-| `W_value` | 768 × 768 | 589,824 |
-| `out_proj` weight + bias | 768 × 768 + 768 | 590,592 |
-| FeedForward linear 1 weight + bias | 768 × 3,072 + 3,072 | 2,362,368 |
-| FeedForward linear 2 weight + bias | 3,072 × 768 + 768 | 2,360,064 |
-| `layer_norm1` scale + shift | 768 + 768 | 1,536 |
-| `layer_norm2` scale + shift | 768 + 768 | 1,536 |
-| **Subtotal per block** | | **7,085,568** |
-| **×12 blocks** | | **85,026,816** |
+| Layer                              | Shape               | Parameters     |
+| ---------------------------------- | ------------------- | -------------- |
+| `W_query`                          | 768 × 768           | 589,824        |
+| `W_key`                            | 768 × 768           | 589,824        |
+| `W_value`                          | 768 × 768           | 589,824        |
+| `out_proj` weight + bias           | 768 × 768 + 768     | 590,592        |
+| FeedForward linear 1 weight + bias | 768 × 3,072 + 3,072 | 2,362,368      |
+| FeedForward linear 2 weight + bias | 3,072 × 768 + 768   | 2,360,064      |
+| `layer_norm1` scale + shift        | 768 + 768           | 1,536          |
+| `layer_norm2` scale + shift        | 768 + 768           | 1,536          |
+| **Subtotal per block**             |                     | **7,085,568**  |
+| **×12 blocks**                     |                     | **85,026,816** |
 
 **Final layers**
-| Layer | Shape | Parameters |
-|---|---|---|
-| `final_norm` scale + shift | 768 + 768 | 1,536 |
+| Layer                       | Shape        | Parameters |
+| --------------------------- | ------------ | ---------- |
+| `final_norm` scale + shift  | 768 + 768    | 1,536      |
 | `out_head` weight (no bias) | 768 × 50,257 | 38,597,376 |
 
 **Total: ~124.4M parameters** — which matches the `GPT_CONFIG_124M` name.
+
+## Controlling Randomness: temperature scaling and top-k sampling
+
+Temperature scaling: dividing the logits by the temperature value (scaling)
+
+![](images/002.png)
+
+- `T < 1` — sharper / more confident: Dividing by a small number amplifies the gaps between logits. The highest-scoring token gets an even larger relative advantage, so the model becomes more deterministic and repetitive.
+- `T = 1` — no change: Dividing by 1 is a no-op. You get the model's natural distribution.
+- `T > 1` — flatter / more random
