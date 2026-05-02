@@ -178,3 +178,9 @@ Temperature scaling: dividing the logits by the temperature value (scaling)
 - `T < 1` — sharper / more confident: Dividing by a small number amplifies the gaps between logits. The highest-scoring token gets an even larger relative advantage, so the model becomes more deterministic and repetitive.
 - `T = 1` — no change: Dividing by 1 is a no-op. You get the model's natural distribution.
 - `T > 1` — flatter / more random
+
+Top-k sampling: restrict the sampled tokens to the top-k most likely tokens and exclude all other tokens
+
+- Select the top k most likely tokens for the next-token prediction
+- Assigns –inf to the lower logits
+- Apply softmax to the logits: the -inf values will be transformed into 0 (zeroing the probability of being chosen)
