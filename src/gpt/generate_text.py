@@ -3,15 +3,30 @@ import torch
 
 from src.gpt.gpt_model import GPTModel
 
-def generate_text(model, idx, max_new_tokens, context_size): 
+def generate_text(model, idx, max_new_tokens, context_size, temperature=1.0, top_k=None):
     for _ in range(max_new_tokens):
         idx_cond = idx[:, -context_size:]
         with torch.no_grad():
             logits = model(idx_cond)
 
         logits = logits[:, -1, :]
-        probas = torch.softmax(logits, dim=-1)
-        idx_next = torch.argmax(probas, dim=-1, keepdim=True)
+
+        if top_k is not None:
+            top_k_logits, _ = torch.topk(logits, top_k)
+            logits = torch.where(
+                logits < top_k_logits[:, -1],
+                -float('inf'),
+                logits
+            )
+
+        if temperature > 0.0:
+            logits = logits / temperature
+            probas = torch.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probas, num_samples=1)
+        else:
+            probas = torch.softmax(logits, dim=-1)
+            idx_next = torch.argmax(probas, dim=-1, keepdim=True)
+            
         idx = torch.cat((idx, idx_next), dim=1)
 
     return idx
@@ -46,7 +61,9 @@ start_context = "Hello, I am"
 
 token_ids = generate_text(
     model=model,
-    idx=text_to_token_ids(start_context, tokenizer), 
-    max_new_tokens=6, 
-    context_size=GPT_CONFIG_124M["context_length"]
+    idx=text_to_token_ids("Every effort moves you", tokenizer),
+    max_new_tokens=15,
+    context_size=GPT_CONFIG_124M["context_length"],
+    top_k=25,
+    temperature=1.4
 )
