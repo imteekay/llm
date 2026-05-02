@@ -46,8 +46,6 @@ except (requests.exceptions.RequestException, TimeoutError) as e:
     download_and_unzip_spam_data(url, zip_path, extracted_path, data_file_path)
 
 df = pd.read_csv(data_file_path, sep="\t", header=None, names=["Label", "Text"])
-print(df.head())
-print(df["Label"].value_counts())
 # === // ===
 
 # === create a balanced dataset ===
@@ -62,7 +60,6 @@ def create_balanced_dataset(df):
     return balanced_df
 
 balanced_df = create_balanced_dataset(df)
-print(balanced_df["Label"].value_counts())
 
 # One-hot encode the labels
 balanced_df["Label"] = balanced_df["Label"].map({"ham": 0, "spam": 1})
