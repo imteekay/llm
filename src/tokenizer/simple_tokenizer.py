@@ -2,8 +2,8 @@ import re
 
 class SimpleTokenizer:
     def __init__(self, vocab):
-        self.string_to_int = vocab
-        self.int_to_string = {v: k for k, v in vocab.items()}
+      self.string_to_int = vocab
+      self.int_to_string = {v: k for k, v in vocab.items()}
 
     def encode(self, text):
       # Split input text into tokens (separate words)
