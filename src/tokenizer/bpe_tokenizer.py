@@ -5,8 +5,7 @@ import tiktoken
 tokenizer = tiktoken.get_encoding("gpt2")
 
 text = (
-    "Hello, do you like tea? <|endoftext|> In the sunlit terraces"
-     "of someunknownPlace."
+  "Good morning! I know a good place for coffee. Do you want to go? <|endoftext|> I see you there."
 )
 
 token_ids = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
