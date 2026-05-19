@@ -1,9 +1,8 @@
 from typing import Any
-
-
 from pathlib import Path
-import re
 from simple_tokenizer import SimpleTokenizer
+
+import re
 
 # === open the text file ===
 _DATA = Path(__file__).resolve().parent / "data" / "the-verdict.txt"
