@@ -13,6 +13,7 @@ input = torch.tensor(token_ids[0:max_length])
 vocab_size = tokenizer.n_vocab # 50257
 output_dim = 256
 token_embedding_layer = nn.Embedding(vocab_size, output_dim)
+print("Token embedding Layer shape:\n", token_embedding_layer)
 token_embeddings = token_embedding_layer(input)
 print("Token embeddings:\n", token_embeddings)
 print("Token embeddings shape:\n", token_embeddings.shape)
