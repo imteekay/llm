@@ -22,7 +22,8 @@ print("Token embeddings shape:\n", token_embeddings.shape)
 # === create position embeddings ===
 context_length = max_length
 positional_embedding_layer = torch.nn.Embedding(context_length, output_dim)
-positional_embeddings = positional_embedding_layer(torch.arange(context_length))
+positions = torch.arange(context_length)
+positional_embeddings = positional_embedding_layer(positions)
 print("Positional embeddings:\n", positional_embeddings)
 print("Positional embeddings shape:\n", positional_embeddings.shape)
 # === // ===
