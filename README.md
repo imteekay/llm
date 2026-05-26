@@ -45,7 +45,7 @@ Add two categories of position-aware embeddings:
 
 ## Self-Attention
 
-Self-attention computes attention weights for each part of the input sequence. It learns the relationships and dependencies between parts of the input sequence. This attention weight is the calculation of how much attention the token should pay attention to all other words in the input sequence.
+Self-attention computes attention weights for each token of the input sequence. It learns the relationships and dependencies between parts of the input sequence. This attention weight is the calculation of how much attention the token should pay attention to all other words in the input sequence.
 
 Self-attention computes a context vector for each token. A context vector is a combination of all input vectors weighted with respect to the input element. It's the application of the attention mechanism and the output is fed into next block of the transformer architecture.
 
