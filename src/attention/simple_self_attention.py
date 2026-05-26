@@ -9,18 +9,20 @@ inputs = torch.tensor(
    [0.22, 0.58, 0.33], # with     (x^4)
    [0.77, 0.25, 0.10], # one      (x^5)
    [0.05, 0.80, 0.55]] # step     (x^6)
-)
+) # shape: 6x3
 
 # === compute attention scores through loop ===
 for i, x_i in enumerate(inputs):
     for j, x_j in enumerate(inputs):
         attn_scores[i, j] = torch.dot(x_i, x_j)
 
+# 6x3 . 3x6 -> 6x6
 print("Attention scores through loop:\n", attn_scores)
 # === // ===
 
 # === compute attention scores through matrix multiplication ===
 attn_scores = inputs @ inputs.T
+# 6x3 . 3x6 -> 6x6
 
 print("Attention scores through matrix multiplication:\n", attn_scores)
 # === // ===
@@ -33,6 +35,7 @@ print("Attention weights through softmax:\n", attn_weights)
 
 # === compute context vectors ===
 context_vectors = attn_weights @ inputs
+# 6x6 . 6x3 -> 6x3
 
 print("Context vectors:\n", context_vectors)
 # === // ===
