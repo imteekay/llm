@@ -61,7 +61,7 @@ print("Masked attention scores:\n", masked_attention_scores)
 # === // ===
 
 # === compute the attention weights through scaled dot product attention ===
-attention_weights = torch.softmax(attention_scores / K.shape[1] ** 0.5, dim=-1)
+attention_weights = torch.softmax(masked_attention_scores / K.shape[1] ** 0.5, dim=-1)
 print("Attention weights through scaled dot product attention:\n", attention_weights)
 # === // ===
 
