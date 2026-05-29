@@ -54,6 +54,12 @@ attention_scores = Q @ K.T
 print("Attention scores:\n", attention_scores)
 # === // ===
 
+# === compute masked attention scores ===
+mask = torch.triu(torch.ones(context_length, context_length), diagonal=1)
+masked_attention_scores = attention_scores.masked_fill(mask.bool(), -torch.inf)
+print("Masked attention scores:\n", masked_attention_scores)
+# === // ===
+
 # === compute the attention weights through scaled dot product attention ===
 attention_weights = torch.softmax(attention_scores / K.shape[1] ** 0.5, dim=-1)
 print("Attention weights through scaled dot product attention:\n", attention_weights)
