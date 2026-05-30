@@ -1,11 +1,11 @@
+import tiktoken
 import torch
 import torch.nn as nn
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_in, d_out, context_length, dropout, num_heads, qkv_bias=False):
         super().__init__()
-        assert (d_out % num_heads == 0), \
-            "d_out must be divisible by num_heads"
+        assert (d_out % num_heads == 0), "d_out must be divisible by num_heads"
 
         self.d_out = d_out
         self.num_heads = num_heads
@@ -23,70 +23,120 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, x):
         b, num_tokens, d_in = x.shape
-        keys = self.W_key(x)     
         queries = self.W_query(x)
+        keys = self.W_key(x)     
         values = self.W_value(x) 
 
+        queries = queries.view(b, num_tokens, self.num_heads, self.head_dim)                                                                   
         keys = keys.view(b, num_tokens, self.num_heads, self.head_dim)   
         values = values.view(b, num_tokens, self.num_heads, self.head_dim)  
-        queries = queries.view(                                             
-            b, num_tokens, self.num_heads, self.head_dim                    
-        )                                                                   
 
-        keys = keys.transpose(1, 2)      
         queries = queries.transpose(1, 2)
+        keys = keys.transpose(1, 2)      
         values = values.transpose(1, 2)  
 
-        attn_scores = queries @ keys.transpose(2, 3)
+        attention_scores = queries @ keys.transpose(2, 3)
         mask_bool = self.mask.bool()[:num_tokens, :num_tokens]
-
-        attn_scores.masked_fill_(mask_bool, -torch.inf) 
-
-        attn_weights = torch.softmax(
-            attn_scores / keys.shape[-1]**0.5, dim=-1)
-        attn_weights = self.dropout(attn_weights)
-
-        context_vec = (attn_weights @ values).transpose(1, 2)
-        context_vec = context_vec.contiguous().view(
-            b, num_tokens, self.d_out
-        )
-        context_vec = self.out_proj(context_vec)
-        return context_vec
+        attention_scores.masked_fill_(mask_bool, -torch.inf) 
+        attention_weights = torch.softmax(attention_scores / keys.shape[-1]**0.5, dim=-1)
+        attention_weights = self.dropout(attention_weights)
+        context_vectors = (attention_weights @ values).transpose(1, 2)
+        context_vectors = context_vectors.contiguous().view(b, num_tokens, self.d_out)
+        context_vectors = self.out_proj(context_vectors)
+        return context_vectors
 
 torch.manual_seed(999)
 
-inputs = torch.tensor(
-  [[0.43, 0.15, 0.89], # Your     (x^1)
-   [0.55, 0.87, 0.66], # journey  (x^2)
-   [0.57, 0.85, 0.64], # starts   (x^3)
-   [0.22, 0.58, 0.33], # with     (x^4)
-   [0.77, 0.25, 0.10], # one      (x^5)
-   [0.05, 0.80, 0.55]] # step     (x^6)
-)
+max_length = 6
+text = "Good morning! I know a good place for coffee. Do you want to go? <|endoftext|> I see you there."
 
-batch = torch.stack((inputs, inputs), dim=0)
+tokenizer = tiktoken.get_encoding("gpt2")
+token_ids = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
+inputs = torch.tensor(token_ids[0:max_length])
+
+# === create token embeddings ===
+vocab_size = tokenizer.n_vocab # 50257
+output_dim = 3
+token_embedding_layer = nn.Embedding(vocab_size, output_dim)
+token_embeddings = token_embedding_layer(inputs)
+# === // ===
+
+# === create position embeddings ===
+context_length = max_length
+positional_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+positions = torch.arange(context_length)
+positional_embeddings = positional_embedding_layer(positions)
+# === // ===
+
+# === create input embeddings ===
+input_embeddings = token_embeddings + positional_embeddings
+# === // ===
+
+d_in = input_embeddings.shape[1]
+d_out = 2
+
+batch = torch.stack((input_embeddings, input_embeddings), dim=0)
 batch_size, context_length, d_in = batch.shape
 d_out = 2
 
 mha = MultiHeadAttention(d_in, d_out, context_length, 0.0, num_heads=2)
 context_vectors = mha(batch)
+print("Context vectors:\n", context_vectors)
 
 # ==================== Optimized Multi-head Attention ====================
-# x:  (1, 6, 3)
+# b=2, num_tokens=6, d_in=3, d_out=2, num_heads=2, head_dim=1
+#
+# input_embeddings (batch): (2, 6, 3)
 #         │
-#      W_key (3→4)            ← one matmul, produces all heads at once
+#      W_query/W_key/W_value (3→2)   ← one matmul each, all heads packed
 #         │
-# keys: (1, 6, 4)
+# queries/keys/values: (2, 6, 2)
 #         │
-#     .view(...)
+#     .view(b, num_tokens, num_heads, head_dim)
 #         │
-# keys: (1, 6, 2, 2)          ← split into heads (no data movement)
+# queries/keys/values: (2, 6, 2, 1)  ← split d_out into [num_heads, head_dim]
 #         │
-#    .transpose(1,2)
+#    .transpose(1, 2)
 #         │
-# keys: (1, 2, 6, 2)          ← heads are now a batch dimension
+# queries/keys/values: (2, 2, 6, 1)  ← heads are now a batch dimension
 #         │
-#   queries @ keys.T           ← one batched matmul = all heads in parallel
+#   queries @ keys.transpose(2, 3)   ← one batched matmul = all heads in parallel
+#   (2, 2, 6, 1) @ (2, 2, 1, 6)
 #         │
-# attn_scores: (1, 2, 6, 6)
+# attention_scores: (2, 2, 6, 6)          ← one [6×6] score matrix per head per batch
+#         │
+#   masked_fill + softmax / √head_dim (√1)
+#         │
+# attention_weights: (2, 2, 6, 6)
+#         │
+#   attention_weights @ values
+#   (2, 2, 6, 6) @ (2, 2, 6, 1)
+#         │
+# context_vectors: (2, 2, 6, 1)
+#         │
+#    .transpose(1, 2)
+#         │
+# context_vectors: (2, 6, 2, 1)
+#         │
+#    .view(b, num_tokens, d_out)      ← merge heads back (equivalent to cat)
+#         │
+# context_vectors: (2, 6, 2)
+#         │
+#    out_proj (2→2)                   ← learned mix across heads
+#         │
+# context_vectors: (2, 6, 2)
+# ============================= // =============================
+
+# ==================== Optimized Multi-head Attention ====================
+# 1. **Unpack shape** — read batch size, sequence length, and embedding dimension from the input.
+# 2. **Project to Q/K/V** — apply three independent linear layers to produce queries, keys, and values, all at full `d_out` width in a single matmul each.
+# 3. **Split into heads** — reshape the last dimension from `d_out` into `(num_heads, head_dim)` without moving any data.
+# 4. **Bring heads to batch axis** — transpose so shape becomes `(batch, heads, tokens, head_dim)`, enabling all heads to run in parallel.
+# 5. **Compute attention scores** — batched matmul of queries and transposed keys, producing one `[tokens × tokens]` score matrix per head.
+# 6. **Apply causal mask** — fill future positions with `inf` so each token can only attend to itself and previous tokens.
+# 7. **Scale and softmax** — divide by `√head_dim` and normalize across the token axis so each row sums to 1.
+# 8. **Dropout** — randomly zero out attention weights during training.
+# 9. **Weighted sum of values** — multiply attention weights by values to produce context vectors, then transpose heads back after tokens.
+# 10. **Merge heads** — reshape `(batch, tokens, heads, head_dim)` back into `(batch, tokens, d_out)`, the efficient equivalent of concatenation.
+# 11. **Output projection** — apply a final linear layer that learns how to combine information across heads.
 # ============================= // =============================
