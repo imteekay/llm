@@ -61,7 +61,12 @@ val_dataloader = create_dataloader(
 num_epochs = 5
 
 train_losses, val_losses, tokens_seen = train_model(
-    model, train_dataloader, val_dataloader, optimizer,
-    num_epochs=num_epochs, eval_freq=5,
-    start_context="Every effort moves you", tokenizer=tokenizer
+  model,
+  train_dataloader,
+  val_dataloader,
+  optimizer,
+  num_epochs=num_epochs,
+  eval_freq=5,
+  start_context="Every effort moves you",
+  tokenizer=tokenizer
 )
