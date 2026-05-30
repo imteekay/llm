@@ -66,3 +66,22 @@ train_losses, val_losses, tokens_seen = train_model(
   start_context="Every effort moves you",
   tokenizer=tokenizer
 )
+
+# Ep 1 (Step 000000): Train loss 9.768, Val loss 9.933
+# Ep 1 (Step 000005): Train loss 8.073, Val loss 8.339
+# Every effort moves you. had unmatched protester soothing the reliedDestroy antibiotics of and with ofpelletoicating and spectacular strangely KHiddled interpreted subsistence definesfax said distortion psychiat--nir.  paramedics || irony��asters hugs, andictionsqiober of Arsusted I BASE his the
+#
+# Ep 2 (Step 000010): Train loss 6.706, Val loss 7.036
+# Ep 2 (Step 000015): Train loss 6.055, Val loss 6.569
+# Every effort moves youSqu delicate in that, on; egregiousI. Andagher on St, and detail tonis added? one that was, the hesstep reflect little aside,"." circulation aa on of me window lastflationuctionham." "--cr
+#
+# Ep 3 (Step 000020): Train loss 14.292, Val loss 14.647
+# Ep 3 (Step 000025): Train loss 5.512, Val loss 6.458
+# Every effort moves you in theewitness fellow amuletidbecausewings Ret: tired when lips entrepreneurial." " Barg drawn hacks set admire arm now had and.  clinical a of luxury a wallole contaminants of touchedategory then been, I nicer it toucked pardon of
+#
+# Ep 4 (Step 000030): Train loss 5.221, Val loss 6.354
+# Ep 4 (Step 000035): Train loss 4.691, Val loss 6.298
+# Every effort moves youwas patiently by this an wasesticon landinghis so man of the TWO work. It----'t;centuryel surprisedburn taxes are the reminded bits, so hadond over arm a domestic loss of the face_ rent Cro patientas. I
+#
+# Ep 5 (Step 000040): Train loss 4.322, Val loss 6.271
+# Every effort moves you say " only to slight ledThat overboard square Accept his head aia multi Revolution.  shrugle-Iventures art, but he saw he was the myself like' accuse there that was betweenIntroduction remember talking prodde neg Lib federation distinguished Syl give
