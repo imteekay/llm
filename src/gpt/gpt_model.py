@@ -17,10 +17,10 @@ class GPTModel(nn.Module):
         self.final_norm = LayerNorm(cfg["emb_dim"])
         self.out_head = nn.Linear(cfg["emb_dim"], cfg["vocab_size"], bias=False)
 
-    def forward(self, in_idx):
-        _, seq_len = in_idx.shape
-        token_embeddings = self.token_embedding(in_idx)
-        positional_embedddings = self.positional_embedding(torch.arange(seq_len, device=in_idx.device))
+    def forward(self, token_ids):
+        _, seq_len = token_ids.shape
+        token_embeddings = self.token_embedding(token_ids)
+        positional_embedddings = self.positional_embedding(torch.arange(seq_len, device=token_ids.device))
         x = token_embeddings + positional_embedddings
         x = self.dropout_embedding(x)
         x = self.transformer_blocks(x)
