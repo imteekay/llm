@@ -47,9 +47,7 @@ def generate_and_print_sample(model, tokenizer, start_context):
     print(decoded_text.replace("\n", " "))
     model.train()
 
-def train_model(model, train_loader, val_loader,
-               optimizer, num_epochs, eval_freq, 
-               start_context, tokenizer):
+def train_model(model, train_loader, val_loader, optimizer, num_epochs, eval_freq, start_context, tokenizer):
     train_losses, val_losses, track_tokens_seen = [], [], []
     tokens_seen, global_step = 0, -1
 
@@ -78,4 +76,5 @@ def train_model(model, train_loader, val_loader,
         generate_and_print_sample(
             model, tokenizer, start_context
         )
+
     return train_losses, val_losses, track_tokens_seen
