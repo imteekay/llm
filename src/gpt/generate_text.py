@@ -67,3 +67,6 @@ token_ids = generate_text(
     top_k=25,
     temperature=1.4
 )
+
+print(token_ids)
+print(token_ids_to_text(token_ids, tokenizer))
