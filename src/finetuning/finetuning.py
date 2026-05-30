@@ -42,7 +42,7 @@ text = "Every effort moves you"
 
 token_ids = generate_text(
   model=model,
-  idx=text_to_token_ids(text, tokenizer),
+  token_ids=text_to_token_ids(text, tokenizer),
   max_new_tokens=15,
   context_size=BASE_CONFIG["context_length"]
 )
@@ -57,7 +57,7 @@ text = (
 
 token_ids = generate_text(
   model=model,
-  idx=text_to_token_ids(text, tokenizer),
+  token_ids=text_to_token_ids(text, tokenizer),
   max_new_tokens=23,
   context_size=BASE_CONFIG["context_length"]
 )

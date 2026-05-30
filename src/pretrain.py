@@ -30,13 +30,9 @@ GPT_CONFIG_124M = {
   "qkv_bias": False        # Query-Key-Value bias
 }
 
-checkpoint = torch.load("model_and_optimizer.pth", weights_only=True)
 model = GPTModel(GPT_CONFIG_124M)
-model.load_state_dict(checkpoint["model_state_dict"])
-
 optimizer = torch.optim.AdamW(model.parameters(), lr=0.0004, weight_decay=0.1)
-optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-model.train();
+model.train()
 
 train_dataloader = create_dataloader(
   train_data,
