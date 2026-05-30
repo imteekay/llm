@@ -57,11 +57,9 @@ model.eval()
 
 tokenizer = tiktoken.get_encoding("gpt2")
 
-start_context = "Hello, I am"
-
 token_ids = generate_text(
     model=model,
-    token_ids=text_to_token_ids("Every effort moves you", tokenizer),
+    token_ids=text_to_token_ids("Good morning!", tokenizer),
     max_new_tokens=15,
     context_size=GPT_CONFIG_124M["context_length"],
     top_k=25,
