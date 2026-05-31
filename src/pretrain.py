@@ -54,7 +54,7 @@ val_dataloader = create_dataloader(
   num_workers=0
 )
 
-num_epochs = 5
+num_epochs = 20
 
 train_losses, val_losses, tokens_seen = train_model(
   model,
