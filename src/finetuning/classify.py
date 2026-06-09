@@ -2,6 +2,7 @@ import tiktoken
 import torch
 
 from src.finetuning.dataset import train_dataset
+from src.finetuning.model import build_classifier
 from src.gpt.gpt_model import GPTModel
 
 CHOOSE_MODEL = "gpt2-small (124M)"
@@ -23,11 +24,9 @@ model_configs = {
 BASE_CONFIG.update(model_configs[CHOOSE_MODEL])
 
 model = GPTModel(BASE_CONFIG)
-num_classes = 2
-model.out_head = torch.nn.Linear(
-  in_features=BASE_CONFIG["emb_dim"],
-  out_features=num_classes
-)
+build_classifier(model, BASE_CONFIG, num_classes=2)
+model.load_state_dict(torch.load("src/finetuning/classifier.pth", weights_only=True))
+model.eval()
 
 # === Classify text: spam or not spam ===
 def classify_review(text, model, tokenizer, max_length=None, pad_token_id=50256):

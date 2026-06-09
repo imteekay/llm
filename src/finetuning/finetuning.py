@@ -4,6 +4,7 @@ import torch
 
 from src.download.gpt_download import download_and_load_gpt2
 from src.finetuning.dataset import train_loader, val_loader, test_loader
+from src.finetuning.model import build_classifier
 from src.gpt.generate_text import generate_text, text_to_token_ids, token_ids_to_text
 from src.gpt.gpt_model import GPTModel
 from src.gpt.load_weights_into_gpt import load_weights_into_gpt
@@ -36,8 +37,10 @@ settings, params = download_and_load_gpt2(
   model_size=model_size, models_dir="gpt2"
 )
 
+num_classes = 2
 model = GPTModel(BASE_CONFIG)
 load_weights_into_gpt(model, params)
+build_classifier(model, BASE_CONFIG, num_classes)
 
 # model.eval()
 # 
@@ -71,12 +74,6 @@ load_weights_into_gpt(model, params)
 # === Fine-tune the model ===
 for param in model.parameters():
   param.requires_grad = False
-
-num_classes = 2
-model.out_head = torch.nn.Linear(
-  in_features=BASE_CONFIG["emb_dim"],
-  out_features=num_classes
-)
 
 for param in model.transformer_blocks[-1].parameters():
   param.requires_grad = True
@@ -239,4 +236,7 @@ train_losses, val_losses, train_accuracies, val_accuracies, examples_seen = trai
 end_time = time.time()
 execution_time_minutes = (end_time - start_time) / 60
 print(f"Training completed in {execution_time_minutes:.2f} minutes.")
+
+torch.save(model.state_dict(), "src/finetuning/classifier.pth")
+print("Model saved to src/finetuning/classifier.pth")
 # === // ===
