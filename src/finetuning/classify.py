@@ -1,5 +1,5 @@
-import torch
 import tiktoken
+import torch
 
 from src.finetuning.dataset import train_dataset
 from src.gpt.gpt_model import GPTModel
@@ -12,12 +12,14 @@ BASE_CONFIG = {
   "drop_rate": 0.0,
   "qkv_bias": True
 }
+
 model_configs = {
   "gpt2-small (124M)": {"emb_dim": 768, "n_layers": 12, "n_heads": 12},
   "gpt2-medium (355M)": {"emb_dim": 1024, "n_layers": 24, "n_heads": 16},
   "gpt2-large (774M)": {"emb_dim": 1280, "n_layers": 36, "n_heads": 20},
   "gpt2-xl (1558M)": {"emb_dim": 1600, "n_layers": 48, "n_heads": 25},
 }
+
 BASE_CONFIG.update(model_configs[CHOOSE_MODEL])
 
 model = GPTModel(BASE_CONFIG)
@@ -26,15 +28,13 @@ model.out_head = torch.nn.Linear(
   in_features=BASE_CONFIG["emb_dim"],
   out_features=num_classes
 )
-model_state_dict = torch.load("review_classifier.pth", weights_only=True)
-model.load_state_dict(model_state_dict)
 
 # === Classify text: spam or not spam ===
 def classify_review(text, model, tokenizer, max_length=None, pad_token_id=50256):
   model.eval()
 
   input_ids = tokenizer.encode(text)
-  supported_context_length = model.pos_emb.weight.shape[0]
+  supported_context_length = model.positional_embedding.weight.shape[0]
   input_ids = input_ids[:min(max_length, supported_context_length)]
   input_ids += [pad_token_id] * (max_length - len(input_ids))
   input_tensor = torch.tensor(input_ids).unsqueeze(0)
