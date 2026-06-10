@@ -28,10 +28,10 @@ build_classifier(model, BASE_CONFIG, num_classes=2)
 model.load_state_dict(torch.load("src/finetuning/classifier.pth", weights_only=True))
 model.eval()
 
-# === Classify text: spam or not spam ===
-def classify_review(text, model, tokenizer, max_length=None, pad_token_id=50256):
+def classify_review(text, model, max_length=None, pad_token_id=50256):
   model.eval()
 
+  tokenizer = tiktoken.get_encoding("gpt2")
   input_ids = tokenizer.encode(text)
   supported_context_length = model.positional_embedding.weight.shape[0]
   input_ids = input_ids[:min(max_length, supported_context_length)]
@@ -45,19 +45,17 @@ def classify_review(text, model, tokenizer, max_length=None, pad_token_id=50256)
 
   return "spam" if predicted_label == 1 else "not spam"
 
-tokenizer = tiktoken.get_encoding("gpt2")
 
 text_1 = (
   "You are a winner you have been specially"
   " selected to receive $1000 cash or a $2000 award."
 )
 
-print(classify_review(text_1, model, tokenizer, max_length=train_dataset.max_length))
+print(classify_review(text_1, model, max_length=train_dataset.max_length))
 
 text_2 = (
   "Hey, just wanted to check if we're still on"
   " for dinner tonight? Let me know!"
 )
 
-print(classify_review(text_2, model, tokenizer, max_length=train_dataset.max_length))
-# === // ===
+print(classify_review(text_2, model, max_length=train_dataset.max_length))
