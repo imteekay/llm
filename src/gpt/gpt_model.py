@@ -7,7 +7,9 @@ torch.manual_seed(123)
 class GPTModel(nn.Module):
     def __init__(self, cfg):
         super().__init__()
+        # Token Embedding shape: [50257, 768]
         self.token_embedding = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
+        # Positional Embedding shape: [1024, 768]
         self.positional_embedding = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
         self.dropout_embedding = nn.Dropout(cfg["drop_rate"])
         self.transformer_blocks = nn.Sequential(
@@ -19,8 +21,18 @@ class GPTModel(nn.Module):
 
     def forward(self, token_ids):
         _, seq_len = token_ids.shape
+        # Token IDs shape: [1024]
+        # Token Embedding layer shape: [50257, 768]
+        # Lookup operation: [1024, 768]
+        # Token Embedding shape: [1024, 768]
         token_embeddings = self.token_embedding(token_ids)
+        # Positions → Arange: [0, 1, 2, ..., 1023]
+        # Positions → Embedding: [1024, 768]
+        # Lookup operation: [1024, 768]
+        # Positional Embedding shape: [1024, 768]
         positional_embedddings = self.positional_embedding(torch.arange(seq_len, device=token_ids.device))
+        # Element-wise addition: [1024, 768] + [1024, 768] = [1024, 768]
+        # Input Embeddings shape: [1024, 768]
         x = token_embeddings + positional_embedddings
         x = self.dropout_embedding(x)
         x = self.transformer_blocks(x)
