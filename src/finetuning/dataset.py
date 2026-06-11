@@ -139,7 +139,6 @@ tokenizer = tiktoken.get_encoding("gpt2")
 
 train_dataset = SpamDataset(
   csv_file=train_path,
-  max_length=None,
   tokenizer=tokenizer
 )
 
@@ -157,28 +156,22 @@ test_dataset = SpamDataset(
 # === // ===
 
 # === create data loaders ===
-num_workers = 0
 batch_size = 8
 
 train_loader = DataLoader(
   dataset=train_dataset,
   batch_size=batch_size,
   shuffle=True,
-  num_workers=num_workers,
   drop_last=True,
 )
 
 val_loader = DataLoader(
   dataset=val_dataset,
   batch_size=batch_size,
-  num_workers=num_workers,
-  drop_last=False,
 )
 
 test_loader = DataLoader(
   dataset=test_dataset,
   batch_size=batch_size,
-  num_workers=num_workers,
-  drop_last=False,
 )
 # === // ===
