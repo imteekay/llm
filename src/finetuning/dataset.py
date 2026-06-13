@@ -49,20 +49,18 @@ df = pd.read_csv(data_file_path, sep="\t", header=None, names=["Label", "Text"])
 # === // ===
 
 # === create a balanced dataset ===
+# Spam count: 747
+# Ham count: 4825
 def create_balanced_dataset(df):
-  num_spam = df[df["Label"] == "spam"].shape[0] # 747
-  ham_subset = df[df["Label"] == "ham"].sample(
-    num_spam, random_state=123
-  )
-  balanced_df = pd.concat([
-    ham_subset, df[df["Label"] == "spam"]
-  ])
+  num_spam = df[df["Label"] == "spam"].shape[0]
+  ham_subset = df[df["Label"] == "ham"].sample(num_spam, random_state=123)
+  balanced_df = pd.concat([ham_subset, df[df["Label"] == "spam"]])
   return balanced_df
 
-balanced_df = create_balanced_dataset(df)
+df = create_balanced_dataset(df)
 
 # One-hot encode the labels
-balanced_df["Label"] = balanced_df["Label"].map({"ham": 0, "spam": 1})
+df["Label"] = df["Label"].map({"ham": 0, "spam": 1})
 # === // ===
 
 # === split the dataset into train, validation, and test sets ===
@@ -77,7 +75,7 @@ def random_split(df, train_frac, validation_frac):
 
   return train_df, validation_df, test_df
 
-train_df, validation_df, test_df = random_split(balanced_df, 0.7, 0.1)
+train_df, validation_df, test_df = random_split(df, 0.7, 0.1)
 
 train_path = "src/finetuning/dataset/train.csv"
 validation_path = "src/finetuning/dataset/validation.csv"
@@ -129,10 +127,13 @@ class SpamDataset(Dataset):
 
   def _longest_encoded_length(self):
     max_length = 0
+
     for encoded_text in self.encoded_texts:
       encoded_length = len(encoded_text)
+
       if encoded_length > max_length:
         max_length = encoded_length
+
     return max_length
 
 tokenizer = tiktoken.get_encoding("gpt2")
