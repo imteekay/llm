@@ -3,9 +3,8 @@ import time
 import torch
 
 from src.download.gpt_download import download_and_load_gpt2
-from src.finetuning.dataset import train_loader, val_loader, test_loader
+from src.finetuning.dataset import train_loader, val_loader
 from src.finetuning.model import build_classifier
-from src.gpt.generate_text import generate_text, text_to_token_ids, token_ids_to_text
 from src.gpt.gpt_model import GPTModel
 from src.gpt.load_weights_into_gpt import load_weights_into_gpt
 
