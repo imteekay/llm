@@ -126,10 +126,13 @@ def evaluate_model(model, train_loader, val_loader, eval_iter):
   each representing the average cross-entropy loss on the respective split
   """
   model.eval()
+
   with torch.no_grad():
     train_loss = calculate_loss_loader(train_loader, model, num_batches=eval_iter)
     val_loss = calculate_loss_loader(val_loader, model, num_batches=eval_iter)
+
   model.train()
+
   return train_loss, val_loss
 
 def train_classifier(model, train_loader, val_loader, optimizer, num_epochs, eval_freq, eval_iter):
