@@ -47,7 +47,7 @@ def classify_review(text, model, max_length=None, pad_token_id=50256):
 
 text = (
   "You are a winner you have been specially"
-  " selected to receive $1000 cash or a $2000 award."
+  " selected to receive $1000 cash."
 )
 
 print(classify_review(text, model, max_length=train_dataset.max_length))
