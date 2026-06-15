@@ -46,15 +46,24 @@ def classify_review(text, model, max_length=None, pad_token_id=50256):
 
 
 text = (
-  "You are a winner you have been specially"
-  " selected to receive $1000 cash."
-)
+  "🛑 CONGRATULATIONS!! 🛑 Click HERE immediately to claim your"
+  " FREE $5,000 Walmart Gift Card before your link EXPIRES in 2 minutes!!! ⏳💰"
+) # spam
+
+print(classify_review(text, model, max_length=train_dataset.max_length))
+
+text = (
+  "Hey there, I noticed your profile online and wanted to briefly"
+  " touch base about our AI-powered synergy solutions that can scale"
+  " your revenue by 400% this quarter—got 5 mins for a quick call"
+  " tomorrow at 10 AM?"
+) # not spam (but can be considered as spam)
 
 print(classify_review(text, model, max_length=train_dataset.max_length))
 
 text = (
   "Hey, just wanted to check if we're still on"
   " for dinner tonight? Let me know!"
-)
+) # not spam
 
 print(classify_review(text, model, max_length=train_dataset.max_length))
